@@ -9,6 +9,7 @@ import Missing from "./Missing";
 import { Route, Switch, useHistory } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+
 function App() {
   const [posts, setPosts] = useState([
     {
@@ -36,9 +37,8 @@ function App() {
       body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!",
     },
   ]);
-
   const [search, setSearch] = useState("");
-  const [serachResults, setSerachResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [postTitle, setPostTitle] = useState("");
   const [postBody, setPostBody] = useState("");
   const history = useHistory();
@@ -49,14 +49,15 @@ function App() {
         post.body.toLowerCase().includes(search.toLowerCase()) ||
         post.title.toLowerCase().includes(search.toLowerCase())
     );
-    setSerachResults(filteredResults.reverse());
+
+    setSearchResults(filteredResults.reverse());
   }, [posts, search]);
 
-  const handleSumbit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const id = posts.length ? posts[posts.lenght - 1].id + 1 : 1;
-    const datetime = format(new Date(), "MMMM dd,yyyy pp");
-    const newPost = { id, title: postTitle, datetime, postBody };
+    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+    const datetime = format(new Date(), "MMMM dd, yyyy pp");
+    const newPost = { id, title: postTitle, datetime, body: postBody };
     const allPosts = [...posts, newPost];
     setPosts(allPosts);
     setPostTitle("");
@@ -69,17 +70,18 @@ function App() {
     setPosts(postsList);
     history.push("/");
   };
+
   return (
     <div className="App">
-      <Header title="React JS BLOG" />
-      <Nav serach={search} setSearch={setSearch} />
+      <Header title="React JS Blog" />
+      <Nav search={search} setSearch={setSearch} />
       <Switch>
         <Route exact path="/">
-          <Home posts={serachResults} />
+          <Home posts={searchResults} />
         </Route>
         <Route exact path="/post">
           <NewPost
-            handleSumbit={handleSumbit}
+            handleSubmit={handleSubmit}
             postTitle={postTitle}
             setPostTitle={setPostTitle}
             postBody={postBody}
